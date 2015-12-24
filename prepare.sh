@@ -1,5 +1,5 @@
 echo step 1 - install packages 
-dnf install gcc file git libevent-devel python-devel sqlite-devel zeromq-devel libffi-devel openssl-devel systemd-python redhat-rpm-config couchdb
+dnf install gcc file git libevent-devel python-devel sqlite-devel zeromq-devel libffi-devel openssl-devel systemd-python redhat-rpm-config couchdb rpm-build
 echo step 2 - bootstrap
 python bootstrap.py
 echo step 3 - buildout
