@@ -43,8 +43,6 @@ install_op () {
     else
         sudo useradd -mrU $project_name
 	    echo "user [$project_name] created"
-	    # prompt for password
-	    sudo passwd $project_name
     fi
 
     # delete project directory if exists
@@ -69,7 +67,7 @@ install_op () {
     cd $project_dir
 
     # copy auth.ini from tests
-    cp /src/openprocurement.api/src/openprocurement/api/tests/auth.ini auth.ini
+    cp src/openprocurement.api/src/openprocurement/api/tests/auth.ini auth.ini
 
     echo "swith to branch $project_branch"
     sudo git checkout $project_branch
