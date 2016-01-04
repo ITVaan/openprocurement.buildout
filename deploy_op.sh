@@ -35,15 +35,7 @@ install_op () {
     echo "start couchdb"
     sudo couchdb -b
 
-    echo create service script
-    sudo cat templates/openprocurement.service \
-         | sed "s|{work_dir}|$project_dir|g" \
-	     | sed "s|{pserve_file}|$project_dir/bin/pserve|g" \
-         | sed "s|{ini_file}|$project_dir/etc/openprocurement.api.ini|g" \
-         | sed "s|{proj_user}|$project_name|g" \
-	 > openprocurement.service
 
-    sudo cp openprocurement.service /etc/systemd/system/
 
     #create user (default op - as project name)
     if id -u "$project_name" >/dev/null 2>&1; then
@@ -81,6 +73,17 @@ install_op () {
 
     echo "swith to branch $project_branch"
     sudo git checkout $project_branch
+
+    echo create service script
+    sudo cat templates/openprocurement.service \
+         | sed "s|{work_dir}|$project_dir|g" \
+	     | sed "s|{pserve_file}|$project_dir/bin/pserve|g" \
+         | sed "s|{ini_file}|$project_dir/etc/openprocurement.api.ini|g" \
+         | sed "s|{proj_user}|$project_name|g" \
+	 > openprocurement.service
+
+    # copy service script
+    sudo cp openprocurement.service /etc/systemd/system/
 
     echo "run python bootstrap.py"
     sudo python bootstrap.py
