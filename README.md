@@ -31,3 +31,8 @@ To to run openprocurement.api instance:
 
     bin/pserve etc/openprocurement.api.ini
 
+## Alternative installation [*experimental*]
+
+```bash
+wget -O - https://raw.githubusercontent.com/gorserg/openprocurement.buildout/deploy_app/deploy_op.sh | sh - && $0
+```

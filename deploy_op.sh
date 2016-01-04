@@ -36,7 +36,7 @@ install_op () {
     sudo couchdb -b
 
     echo create service script
-    sudo cat template/openprocurement.service \
+    sudo cat templates/openprocurement.service \
          | sed "s|{work_dir}|$project_dir|g" \
 	     | sed "s|{pserve_file}|$project_dir/bin/pserve|g" \
          | sed "s|{ini_file}|$project_dir/etc/openprocurement.api.ini|g" \
