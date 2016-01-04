@@ -90,9 +90,9 @@ install_op () {
     sudo bin/buildout -N
 
     echo "start service"
-    sudo systemctl enable openprocurement.api
-    sudo systemctl start openprocurement.api
-    sudo systemctl status openprocurement.api
+    sudo systemctl enable openprocurement
+    sudo systemctl start openprocurement
+    sudo systemctl status openprocurement
     echo "view journal"
     sudo journalctl -u openprocurement.api
 }
