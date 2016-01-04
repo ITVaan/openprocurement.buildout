@@ -4,7 +4,7 @@ ExecStart={pserve_file} {ini_file}
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=openprocurement.api
+SyslogIdentifier=openprocurement
 User={proj_user}
 Group={proj_user}
 

@@ -94,7 +94,7 @@ install_op () {
     sudo systemctl start openprocurement
     sudo systemctl status openprocurement
     echo "view journal"
-    sudo journalctl -u openprocurement.api
+    sudo journalctl -u openprocurement
 }
 
 install_op
