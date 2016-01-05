@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 project_name=op
-project_root=$HOME
+project_root=/home/$USER
 project_dir=$project_root/$project_name
 project_repo=https://github.com/gorserg/openprocurement.buildout.git
 project_branch=deploy_app
