@@ -35,8 +35,6 @@ install_op () {
     echo "start couchdb"
     sudo couchdb -b
 
-
-
     #create user (default op - as project name)
     if id -u "$project_name" >/dev/null 2>&1; then
         echo "user [$project_name] exists"
@@ -46,9 +44,9 @@ install_op () {
     fi
 
     # delete project directory if exists
-    if [ -d "$project_dir" ]; then
-        sudo rm -r -f $project_dir
-    fi
+    #if [ -d "$project_dir" ]; then
+    #    sudo rm -r -f $project_dir
+    #fi
 
     # create empty project directory
     sudo mkdir $project_dir
