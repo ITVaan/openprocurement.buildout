@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 project_name=op
-project_root=/home/vagrant
+project_root=/home/
 project_dir=$project_root/$project_name
 project_repo=https://github.com/gorserg/openprocurement.buildout.git
 project_branch=deploy_app
@@ -64,9 +64,6 @@ install_op () {
 
     cd $project_dir
 
-    # copy auth.ini from tests
-    cp src/openprocurement.api/src/openprocurement/api/tests/auth.ini auth.ini
-
     echo "swith to branch $project_branch"
     sudo git checkout $project_branch
 
@@ -86,6 +83,9 @@ install_op () {
 
     echo "run buildout"
     sudo bin/buildout -N
+
+    # copy auth.ini from tests
+    cp src/openprocurement.api/src/openprocurement/api/tests/auth.ini auth.ini
 
     echo "start service"
     sudo systemctl enable openprocurement
