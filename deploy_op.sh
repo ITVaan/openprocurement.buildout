@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
 project_name=op
-project_root=/home/$USER
+project_root=/srv
 project_dir=$project_root/$project_name
 project_repo=https://github.com/gorserg/openprocurement.buildout.git
 project_branch=deploy_app
+
+# Sanity Checks
+if [[ $EUID -ne 0 ]]; then
+    echo "ERROR: Must be run with root privileges."
+    exit 1
+fi
 
 # required os packages
 packages="gcc file git libevent-devel python-devel sqlite-devel zeromq-devel libffi-devel openssl-devel systemd-python redhat-rpm-config couchdb mc"
@@ -14,85 +20,93 @@ installed () {
     hash $1 2>/dev/null
 }
 
+# package manager for OS
+package_manager=dnf
+
 install_op () {
-    # Install os dependencies:
     if installed dnf; then
         # Fedora >= 22:
-        sudo dnf update -yy
-        sudo dnf install -yy $packages
+        package_manager=dnf
     elif installed yum; then
         # Fedora < 22:
-        sudo yum update -yy
-        sudo yum install -yy $packages
+        package_manager=yum
     elif installed apt-get; then
         # Debian/ubuntu:
-        sudo apt-get update -yy
-        sudo apt-get install -yy $packages
+        package_manager=apt-get
     else
 	    echo "Not supported OS."
+      exit 1
     fi
 
-    echo "start couchdb"
-    sudo couchdb -b
+    echo "Install OS dependencies with $package_manager"
+    $package_manager update -yy && $package_manager install -yy $packages
 
-    #create user (default op - as project name)
+    echo "Create user (default op - as project name)"
     if id -u "$project_name" >/dev/null 2>&1; then
         echo "user [$project_name] exists"
     else
-        sudo useradd -mrU $project_name
+        useradd -mrU $project_name
 	    echo "user [$project_name] created"
     fi
 
-    # delete project directory if exists
-    #if [ -d "$project_dir" ]; then
-    #    sudo rm -r -f $project_dir
-    #fi
+    echo "Create empty project directory"
+    mkdir $project_dir
 
-    # create empty project directory
-    sudo mkdir $project_dir
-
-    sudo chmod -R 777 $project_root
-
-    # change directory owner
-    sudo chown -R $project_name $project_root
-
-    # change directory group
-    sudo chgrp $project_name $project_root
-
-    echo "clone repository $project_repo"
-    sudo git clone $project_repo $project_dir
+    echo "Clone repository $project_repo"
+    git clone $project_repo $project_dir
 
     cd $project_dir
 
-    echo "swith to branch $project_branch"
-    sudo git checkout $project_branch
+    echo "Swith to branch $project_branch"
+    git checkout $project_branch
 
-    echo create service script
-    sudo cat templates/openprocurement.service \
-         | sed "s|{work_dir}|$project_dir|g" \
-	     | sed "s|{pserve_file}|$project_dir/bin/pserve|g" \
-         | sed "s|{ini_file}|$project_dir/etc/openprocurement.api.ini|g" \
-         | sed "s|{proj_user}|$project_name|g" \
-	 > openprocurement.service
+    echo "Create service script"
+    if [ ! -f ./openprocurement.service ]; then
+      cat > ./openprocurement.service <<CLICK
+[Service]
+WorkingDirectory=$project_dir
+ExecStartPre=$project_dir/bin/circusd --daemon
+ExecStart=$project_dir/bin/pserve $project_dir/etc/openprocurement.api.ini
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+ExecReload=/bin/kill -HUP $MAINPID
+SyslogIdentifier=openprocurement
+User=$project_name
+Group=$project_name
 
-    # copy service script
-    sudo cp openprocurement.service /etc/systemd/system/
+[Install]
+WantedBy=multi-user.target
+CLICK
+    fi
 
-    echo "run python bootstrap.py"
-    sudo python bootstrap.py
+    echo "Copy service script"
+    cp openprocurement.service /etc/systemd/system/
 
-    echo "run buildout"
-    sudo bin/buildout -N
+    echo "Run python bootstrap.py"
+    python bootstrap.py
 
-    # copy auth.ini from tests
+    echo "Run buildout"
+    bin/buildout -N
+
+    echo "Run circusd"
+    bin/circusd --daemon
+
+    echo "Copy auth.ini from tests"
     cp src/openprocurement.api/src/openprocurement/api/tests/auth.ini auth.ini
 
-    echo "start service"
-    sudo systemctl enable openprocurement
-    sudo systemctl start openprocurement
-    sudo systemctl status openprocurement
-    echo "view journal"
-    sudo journalctl -u openprocurement
+    echo "Change directory owner"
+    chown -R $project_name $project_root
+
+    echo "Change directory group"
+    chgrp $project_name $project_root
+
+    echo "Start service"
+    systemctl enable openprocurement
+    systemctl start openprocurement
+    systemctl status openprocurement
+    echo "View journal"
+    journalctl -u openprocurement
 }
 
 install_op
