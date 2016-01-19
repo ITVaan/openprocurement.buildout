@@ -8,7 +8,7 @@ guest_ip = "192.168.100.1"
 hostname = "op.local"
 
 # code directories
-code_share_host_path = "../"
+code_share_host_path = "."
 code_share_guest_path = "/vagrant/"
 
 Vagrant.configure(2) do |config|
@@ -23,6 +23,7 @@ Vagrant.configure(2) do |config|
 
   # mount the host shared folder
   config.vm.synced_folder code_share_host_path, code_share_guest_path, mount_options: ["ro"]
+  config.vm.synced_folder "share", "/srv/op"
 
   # set up private code
   if File.exist?("#{code_share_host_path}/deploy_op.sh")

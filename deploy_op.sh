@@ -65,12 +65,11 @@ install_op () {
       cat > ./openprocurement.service <<CLICK
 [Service]
 WorkingDirectory=$project_dir
-ExecStartPre=$project_dir/bin/circusd --daemon
-ExecStart=$project_dir/bin/pserve $project_dir/etc/openprocurement.api.ini
+ExecStart=/bin/sh $project_dir/start.sh
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
-ExecReload=/bin/kill -HUP $MAINPID
+ExecReload=/bin/kill -HUP \$MAINPID
 SyslogIdentifier=openprocurement
 User=$project_name
 Group=$project_name
