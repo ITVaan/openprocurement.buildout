@@ -4,7 +4,7 @@
 vagrant_user = "vagrant"
 
 # "default" vm config
-guest_ip = "192.168.100.1"
+guest_ip = "192.168.100.100"
 hostname = "op.local"
 
 # code directories
@@ -23,7 +23,6 @@ Vagrant.configure(2) do |config|
 
   # mount the host shared folder
   config.vm.synced_folder code_share_host_path, code_share_guest_path, mount_options: ["ro"]
-  config.vm.synced_folder "share", "/srv/op"
 
   # set up private code
   if File.exist?("#{code_share_host_path}/deploy_op.sh")
@@ -31,5 +30,5 @@ Vagrant.configure(2) do |config|
   else
     config.vm.provision "shell", path: "https://raw.githubusercontent.com/gorserg/openprocurement.buildout/deploy_app/deploy_op.sh"
   end
-  #
+
 end
