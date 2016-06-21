@@ -14,7 +14,7 @@ formatters:
 handlers:
   console:
     class: logging.StreamHandler
-    level: DEBUG
+    level: INFO
     formatter: simple
     stream: ext://sys.stdout
 
@@ -34,3 +34,4 @@ loggers:
   "":
     handlers: [console, journal]
     level: DEBUG
+
