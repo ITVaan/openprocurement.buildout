@@ -13,9 +13,6 @@ main:
   delay: ${options['delay']}
   increment_step: ${options['increment_step']}
   decrement_step: ${options['decrement_step']}
-  proxy_server: ${options['proxy_server']}
-  proxy_token: ${options['proxy_token']}
-  proxy_port: ${options['proxy_port']}
   doc_service_server: ${options['doc_service_server']}
   doc_service_port: ${options['doc_service_port']}
   doc_service_user: ${options['doc_service_user']}
