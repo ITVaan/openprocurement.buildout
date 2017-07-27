@@ -19,12 +19,17 @@ main:
   doc_service_port: ${options['doc_service_port']}
   doc_service_user: ${options['doc_service_user']}
   doc_service_password: ${options['doc_service_password']}
+  cache_db_name: ${options['cache_db_name']}
+  cache_host: ${options['cache_host']}
+  cache_port: ${options['cache_port']}
+  time_to_live: ${options['time_to_live']}
+  time_to_live_negative: ${options['time_to_live_negative']}
 
 version: 1
 
 formatters:
   simple:
-    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    format: "%(asctime)s - %(name)s:%(funcName)s - %(lineno)s  - %(levelname)s - %(message)s"
 
 handlers:
   console:
